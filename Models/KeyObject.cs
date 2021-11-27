@@ -1,11 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TASBoard.WorkspaceObjects
+namespace TASBoard.Models
 {
     public class KeyObject
     {
@@ -24,6 +19,6 @@ namespace TASBoard.WorkspaceObjects
             keyUpImage = new("Assets\\KeySprites\\" + keyStyle + "\\" + keyName + "Up.png");
         }
 
-        public Bitmap Image => DisplayKeyDown ? keyDownImage : keyUpImage; 
+        public Bitmap Image => DisplayKeyDown ? keyDownImage : keyUpImage;
     }
 }
