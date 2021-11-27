@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TASBoard.ViewModels
 {
-    class HomeSidebarViewModel : ViewModelBase
+    public class HomeSidebarViewModel : ViewModelBase
     {
         public HomeSidebarViewModel() { }
     }

@@ -25,6 +25,6 @@ namespace TASBoard.ViewModels
         {
             get => currentWorkspace;
             private set => currentWorkspace = value;
-        }
+        } 
     }
 }

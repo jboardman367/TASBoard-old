@@ -10,8 +10,11 @@
         Title="TASBoard">
 
 	<DockPanel>
-		<ContentControl DockPanel.Dock="Left" Content="{Binding CurrentSidebar}"/>
-		<ContentControl Content="{Binding CurrentWorkspace}"/>
+		<ContentControl DockPanel.Dock="Left" 
+						Content="{Binding CurrentSidebar}"
+						/>
+		<ContentControl Content="{Binding CurrentWorkspace}
+						"/>
 	</DockPanel>
 	
 </Window>
