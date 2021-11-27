@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TASBoard": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\smart\\source\\repos\\TASBoardNotTest\\TASBoard"
+    }
+  }
+}

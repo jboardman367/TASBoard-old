@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using ReactiveUI;
 using System.Collections.ObjectModel;
 using TASBoard.Models;
 
@@ -12,7 +13,12 @@ namespace TASBoard.ViewModels
             bg = new SolidColorBrush(new Color(255, 112, 112, 112));
         }
 
-        public Brush bg;
+        private Brush bg;
+        public Brush Background 
+        { 
+            get => bg; 
+            set => this.RaiseAndSetIfChanged(ref bg, value); 
+        }
 
         public void AddNewKey(string keyStyle, string keyName)
         {
@@ -21,7 +27,7 @@ namespace TASBoard.ViewModels
 
         public void UpdateWorkspaceBackground(byte r, byte g, byte b)
         {
-            bg = new SolidColorBrush(new Color(255, r, g, b));
+            Background = new SolidColorBrush(new Color(255, r, g, b));
         }
 
         private ObservableCollection<KeyObject> _items;

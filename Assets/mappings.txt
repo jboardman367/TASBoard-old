@@ -1,0 +1,8 @@
+﻿77,W
+61,A
+73,S
+64,D
+ffe1,LSHIFT
+20,SPACE
+ff0d,RETURN
+ff1b,ESCSAPE
