@@ -1,4 +1,5 @@
 ﻿using ReactiveUI;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -15,9 +16,25 @@ namespace TASBoard.ViewModels
         {
             keyNames = new();
             keyStyles = new();
-            UpdateDropdowns();
             workspace = w;
+
+            var addKeyEnabled = this.WhenAnyValue(
+                x => x.SelectedKey,
+                x => !string.IsNullOrEmpty(x));
+
+            AddKey = ReactiveCommand.Create(
+                AddKeyToWorkspace,
+                addKeyEnabled);
         }
+
+
+        private void AddKeyToWorkspace()
+        {
+            if (selectedKey is not null && selectedStyle is not null)
+                workspace.AddKey(selectedStyle, selectedKey);
+        }
+
+        public ReactiveCommand<Unit, Unit> AddKey { get; }
 
         private string? selectedKey, selectedStyle;
 

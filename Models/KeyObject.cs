@@ -1,8 +1,9 @@
 ﻿using Avalonia.Media.Imaging;
+using ReactiveUI;
 
 namespace TASBoard.Models
 {
-    public class KeyObject
+    public class KeyObject : ReactiveObject
     {
 
         public static bool DisplayKeyDown { get; set; } = false;
@@ -10,14 +11,34 @@ namespace TASBoard.Models
         private Bitmap keyDownImage;
         private Bitmap keyUpImage;
 
-        public int X, Y;
+        private int _x, _y, _zIndex;
 
-
-        public KeyObject(string keyStyle, string keyName) 
+        public int X
         {
-            keyDownImage = new("Assets\\KeySprites\\" + keyStyle + "\\" + keyName + "Down.png");
-            keyUpImage = new("Assets\\KeySprites\\" + keyStyle + "\\" + keyName + "Up.png");
+            get => _x;
+            set => this.RaiseAndSetIfChanged(ref _x, value);
         }
+        public int Y
+        {
+            get => _y;
+            set => this.RaiseAndSetIfChanged(ref _y, value);
+        }
+        public int zIndex
+        {
+            get => _zIndex;
+            set => this.RaiseAndSetIfChanged(ref _zIndex, value);
+        }
+
+
+        public KeyObject(string keyStyle, string keyName, int x, int y, int zInd) 
+        {
+            keyDownImage = new("Assets\\KeySprites\\" + keyStyle + "\\" + keyName + "_down.png");
+            keyUpImage = new("Assets\\KeySprites\\" + keyStyle + "\\" + keyName + "_up.png");
+            _x = x;
+            _y = y;
+            _zIndex = zInd;
+        }
+        public KeyObject(string keyStyle, string keyName) : this(keyStyle, keyName, 0, 0, 0) { }
 
         public Bitmap Image => DisplayKeyDown ? keyDownImage : keyUpImage;
     }

@@ -14,5 +14,15 @@ namespace TASBoard.Models
         {
             AllKeys = new();
         }
+
+        public void AddKey(string keyStyle, string keyName)
+        {
+            AllKeys.Add(new KeyObject(keyStyle, keyName));
+        }
+
+        public void AddKey(KeyObject key)
+        {
+            AllKeys.Add(key);
+        }
     }
 }

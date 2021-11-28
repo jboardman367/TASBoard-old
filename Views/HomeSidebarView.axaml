@@ -31,8 +31,9 @@
 				</ComboBox.ItemTemplate>
 			</ComboBox>
 		</StackPanel>
-		<Button Margin="10" HorizontalAlignment="Right">
+		<Button Margin="10" HorizontalAlignment="Right"
+				Command="{Binding AddKey}">
 			Add Key
-		</Button>	
+		</Button>
 	</StackPanel>
 </UserControl>
