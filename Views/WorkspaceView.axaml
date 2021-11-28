@@ -4,16 +4,25 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
              x:Class="TASBoard.Views.WorkspaceView">
-	<Canvas Background="{Binding Background}"
-			UseLayoutRounding="True">
-		<ItemsControl Items="{Binding Items}">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<Image Source="{Binding Image}"
-						   Canvas.Left="{Binding X}"
-						   Canvas.Top="{Binding Y}"/>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
-	</Canvas>
+	<ItemsControl Items="{Binding Items}">
+		<ItemsControl.ItemsPanel>
+			<ItemsPanelTemplate>
+				<Canvas Background="{Binding Background}"
+						UseLayoutRounding="True"
+						Name="canvas"
+						PointerMoved="PointerMovedOnCanvas"
+						PointerLeave="PointerLeftCanvas"/>
+			</ItemsPanelTemplate>
+		</ItemsControl.ItemsPanel>
+		<ItemsControl.ItemTemplate>
+			<DataTemplate>
+				<Image Source="{Binding Image}"
+					   Canvas.Left="{Binding X}"
+					   Canvas.Top="{Binding Y}"
+					   ZIndex="{Binding zIndex}"
+					   PointerPressed="ImageClick"
+					   PointerReleased="ImageRelease"/>
+			</DataTemplate>
+		</ItemsControl.ItemTemplate>
+	</ItemsControl>
 </UserControl>
