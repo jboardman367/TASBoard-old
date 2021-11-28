@@ -4,16 +4,19 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using TASBoard.Models;
 
 namespace TASBoard.ViewModels
 {
     public class HomeSidebarViewModel : ViewModelBase
     {
-        public HomeSidebarViewModel() 
+        private Workspace workspace;
+        public HomeSidebarViewModel(Workspace w) 
         {
             keyNames = new();
             keyStyles = new();
             UpdateDropdowns();
+            workspace = w;
         }
 
         private string? selectedKey, selectedStyle;

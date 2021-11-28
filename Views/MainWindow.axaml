@@ -12,6 +12,8 @@
 	<DockPanel>
 		<ContentControl DockPanel.Dock="Left" 
 						Content="{Binding CurrentSidebar}"
+						MinWidth="300"
+						MaxWidth="300"
 						/>
 		<ContentControl Content="{Binding CurrentWorkspace}
 						"/>

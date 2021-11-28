@@ -10,7 +10,8 @@
 					  PlaceholderText="Select a style"
 					  Items="{Binding KeyStyles}"
 					  SelectedItem="{Binding SelectedStyle}"
-					  PointerPressed="UpdateDropdowns">
+					  PointerPressed="UpdateDropdowns"
+					  Width="144">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding}"/>
@@ -21,7 +22,8 @@
 					  PlaceholderText="Select a key"
 					  Items="{Binding KeyNames}"
 					  SelectedItem="{Binding SelectedKey}"
-					  PointerPressed="UpdateDropdowns">
+					  PointerPressed="UpdateDropdowns"
+					  Width="125">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding}"/>

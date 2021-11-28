@@ -1,3 +1,5 @@
+using TASBoard.Models;
+
 namespace TASBoard.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
@@ -7,8 +9,9 @@ namespace TASBoard.ViewModels
 
         public MainWindowViewModel()
         {
-            currentSidebar = new HomeSidebarViewModel();
-            currentWorkspace = new WorkspaceViewModel();
+            Workspace w = new();
+            currentSidebar = new HomeSidebarViewModel(w);
+            currentWorkspace = new WorkspaceViewModel(w);
         }
 
         public ViewModelBase CurrentSidebar
