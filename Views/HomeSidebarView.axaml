@@ -31,9 +31,20 @@
 				</ComboBox.ItemTemplate>
 			</ComboBox>
 		</StackPanel>
-		<Button Margin="10" HorizontalAlignment="Right"
-				Command="{Binding AddKey}">
-			Add Key
-		</Button>
+		<StackPanel Margin="10" Orientation="Horizontal">
+			<CheckBox Click="DisplayKeysDownClicked">Display keys down</CheckBox>
+			<Button DockPanel.Dock="Right"
+					Command="{Binding AddKey}">
+				Add Key
+			</Button>
+		</StackPanel>
+		<TextBox Text="{Binding MoviePath}" 
+					Watermark="Path to movie file"
+					Width="280"
+					Margin="10"/>
+		<TextBox Text="{Binding OutputPath}"
+					Watermark="Path to movie file"
+					Width="280"
+					Margin="10"/>
 	</StackPanel>
 </UserControl>

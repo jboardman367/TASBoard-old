@@ -1,8 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using TASBoard.ViewModels;
+using TASBoard.Models;
 
 namespace TASBoard.Views
 {
@@ -20,11 +22,15 @@ namespace TASBoard.Views
 
         private void UpdateDropdowns(object sender, PointerPressedEventArgs e)
         {
-            
-            if (DataContext is null) { return; }
-            HomeSidebarViewModel context = (HomeSidebarViewModel)DataContext;
-            //context.SelectedStyle = (string)e.AddedItems[0];
+            var context = (HomeSidebarViewModel)DataContext;
             context.UpdateDropdowns();
+        }
+
+        private void DisplayKeysDownClicked(object sender, RoutedEventArgs e)
+        {
+            var check = (CheckBox)sender;
+            var context = (HomeSidebarViewModel)DataContext;
+            context.Workspace.SetDisplayKeyDown(check.IsChecked ?? false);
         }
     }
 }

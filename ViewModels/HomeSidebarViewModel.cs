@@ -12,6 +12,8 @@ namespace TASBoard.ViewModels
     public class HomeSidebarViewModel : ViewModelBase
     {
         private Workspace workspace;
+
+        public Workspace Workspace { get => workspace; }
         public HomeSidebarViewModel(Workspace w) 
         {
             keyNames = new();
@@ -152,5 +154,8 @@ namespace TASBoard.ViewModels
 
             return mappedKeys;
         }
+
+        public string? MoviePath { get; set; }
+        public string? OutputPath { get; set; }
     }
 }

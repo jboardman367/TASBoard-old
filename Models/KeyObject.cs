@@ -6,11 +6,9 @@ namespace TASBoard.Models
 {
     public class KeyObject : ReactiveObject
     {
-
-        public static bool DisplayKeyDown { get; set; } = false;
-
         private Bitmap keyDownImage;
         private Bitmap keyUpImage;
+        private Bitmap currentImage;
 
         private int _x, _y, _zIndex;
 
@@ -33,16 +31,23 @@ namespace TASBoard.Models
         public Rect Bounds { get; set; }
 
 
-        public KeyObject(string keyStyle, string keyName, int x, int y, int zInd) 
+        public KeyObject(string keyStyle, string keyName, int x, int y, int zInd, bool displayDown) 
         {
             keyDownImage = new("Assets\\KeySprites\\" + keyStyle + "\\" + keyName + "_down.png");
             keyUpImage = new("Assets\\KeySprites\\" + keyStyle + "\\" + keyName + "_up.png");
+            currentImage = displayDown ? keyDownImage : keyUpImage;
             _x = x;
             _y = y;
             _zIndex = zInd;
         }
-        public KeyObject(string keyStyle, string keyName) : this(keyStyle, keyName, 0, 0, 0) { }
 
-        public Bitmap Image => DisplayKeyDown ? keyDownImage : keyUpImage;
+        public void SetKeyDown(bool displayDown)
+        {
+            Image = displayDown ? keyDownImage : keyUpImage;
+        }
+
+        public KeyObject(string keyStyle, string keyName, bool displayDown) : this(keyStyle, keyName, 0, 0, 0, displayDown) { }
+
+        public Bitmap Image { get => currentImage; set => this.RaiseAndSetIfChanged(ref currentImage, value); }
     }
 }

@@ -17,12 +17,23 @@ namespace TASBoard.Models
 
         public void AddKey(string keyStyle, string keyName)
         {
-            AllKeys.Add(new KeyObject(keyStyle, keyName));
+            AllKeys.Add(new KeyObject(keyStyle, keyName, displayKeyDown));
         }
 
         public void AddKey(KeyObject key)
         {
             AllKeys.Add(key);
         }
+
+        public void SetDisplayKeyDown(bool value)
+        {
+            foreach (var key in AllKeys)
+            {
+                key.SetKeyDown(value);
+            }
+            displayKeyDown = value;
+        }
+
+        private bool displayKeyDown = false;
     }
 }

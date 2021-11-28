@@ -9,7 +9,6 @@
 			<ItemsPanelTemplate>
 				<Canvas Background="{Binding Background}"
 						UseLayoutRounding="True"
-						Name="canvas"
 						PointerMoved="PointerMovedOnCanvas"/>
 			</ItemsPanelTemplate>
 		</ItemsControl.ItemsPanel>
@@ -18,7 +17,7 @@
 				<Image Source="{Binding Image}"
 					   Canvas.Left="{Binding X}"
 					   Canvas.Top="{Binding Y}"
-					   Bounds="{Binding Bounds}"
+					   Bounds="{Binding Bounds, Mode=OneWayToSource}"
 					   ZIndex="{Binding zIndex}"
 					   PointerPressed="ImageClick"
 					   PointerReleased="ImageRelease"/>
