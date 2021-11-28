@@ -34,13 +34,6 @@ namespace TASBoard.Views
                 e.Handled = true;
             }
 
-            if (heldImage is not null && properties.IsRightButtonPressed && sender == heldImage)
-            {
-                // Image is being snapped back to starting location
-                heldImage.Arrange(new Rect(imageStartLocation, heldImage.Bounds.Size));
-                heldImage = null;
-                e.Handled = true;
-            }
         }
 
         public void ImageRelease(object sender, PointerReleasedEventArgs e)
@@ -50,6 +43,10 @@ namespace TASBoard.Views
             if (heldImage is not null && !properties.IsLeftButtonPressed)
             {
                 // Image is released
+                if (!Bounds.Contains(heldImage.Bounds))
+                {
+                    heldImage.Arrange(new Rect(imageStartLocation, heldImage.Bounds.Size));
+                }
                 heldImage = null;
                 e.Handled = true;
             }
@@ -59,6 +56,15 @@ namespace TASBoard.Views
         {
             var pointer = e.GetCurrentPoint(this);
             var properties = pointer.Properties;
+
+            if (heldImage is not null && properties.IsRightButtonPressed)
+            {
+                // Image is being snapped back to starting location
+                heldImage.Arrange(new Rect(imageStartLocation, heldImage.Bounds.Size));
+                heldImage = null;
+                e.Handled = true;
+            }
+
             if (heldImage is not null && properties.IsLeftButtonPressed)
             {
                 // Image is being dragged along
