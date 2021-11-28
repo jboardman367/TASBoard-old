@@ -74,18 +74,5 @@ namespace TASBoard.Views
             }
         }
 
-        public void PointerLeftCanvas(object sender, PointerEventArgs e)
-        {
-            var pointer = e.GetCurrentPoint(this);
-            var properties = pointer.Properties;
-            if (heldImage is not null)
-            {
-                // Image has been dragged out of the canvas,
-                // so snap back to the start
-                heldImage.Arrange(new Rect(imageStartLocation, heldImage.Bounds.Size));
-                heldImage = null;
-                e.Handled = true;
-            }
-        }
     }
 }

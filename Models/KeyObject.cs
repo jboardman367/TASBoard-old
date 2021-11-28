@@ -1,4 +1,5 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia;
+using Avalonia.Media.Imaging;
 using ReactiveUI;
 
 namespace TASBoard.Models
@@ -28,6 +29,8 @@ namespace TASBoard.Models
             get => _zIndex;
             set => this.RaiseAndSetIfChanged(ref _zIndex, value);
         }
+
+        public Rect Bounds { get; set; }
 
 
         public KeyObject(string keyStyle, string keyName, int x, int y, int zInd) 
