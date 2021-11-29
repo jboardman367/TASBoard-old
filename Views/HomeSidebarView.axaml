@@ -32,8 +32,9 @@
 			</ComboBox>
 		</StackPanel>
 		<DockPanel Margin="10">
-			<CheckBox Click="DisplayKeysDownClicked">Display keys down</CheckBox>
-			<Button DockPanel.Dock="Right"
+			<CheckBox Click="DisplayKeysDownClicked"
+					  DockPanel.Dock="Left">Display keys down</CheckBox>
+			<Button HorizontalAlignment="Right"
 					Command="{Binding AddKey}">
 				Add Key
 			</Button>
@@ -46,5 +47,10 @@
 					Watermark="Path to save output"
 					Width="280"
 					Margin="10"/>
+		<Button HorizontalAlignment="Right"
+				Margin="10"
+				Command="{Binding Encode}">
+			Encode
+		</Button>
 	</StackPanel>
 </UserControl>

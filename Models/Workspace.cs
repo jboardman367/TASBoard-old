@@ -35,5 +35,10 @@ namespace TASBoard.Models
         }
 
         private bool displayKeyDown = false;
+
+        public void Encode(string moviePath, string outputPath)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

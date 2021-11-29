@@ -6,7 +6,20 @@ using System.Threading.Tasks;
 
 namespace TASBoard.MovieReaders
 {
-    class LibTASReader
+    class LibTASReader : IMovieReader
     {
+        public IEnumerable<List<string>> Frames => throw new NotImplementedException();
+
+        public MovieSettings MovieSettings => throw new NotImplementedException();
+
+        public void Close()
+        {
+            throw new NotImplementedException();
+        }
+
+        public LibTASReader(string fname)
+        {
+
+        }
     }
 }

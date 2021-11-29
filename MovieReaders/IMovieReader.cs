@@ -6,7 +6,23 @@ using System.Threading.Tasks;
 
 namespace TASBoard.MovieReaders
 {
-    class MovieReader
+    interface IMovieReader
     {
+        void Close();
+
+        IEnumerable<List<string>> Frames { get; }
+
+        MovieSettings MovieSettings { get; }
+    }
+
+    struct MovieSettings
+    {
+        int Num;
+        int Den;
+        public MovieSettings(int num, int den)
+        {
+            Num = num;
+            Den = den;
+        }
     }
 }

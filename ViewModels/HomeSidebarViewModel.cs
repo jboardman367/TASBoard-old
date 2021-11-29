@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using TASBoard.Models;
 
 namespace TASBoard.ViewModels
@@ -14,12 +15,15 @@ namespace TASBoard.ViewModels
         private Workspace workspace;
 
         public Workspace Workspace { get => workspace; }
-        public HomeSidebarViewModel(Workspace w) 
+        public HomeSidebarViewModel(Workspace w)
         {
-            keyNames = new();
-            keyStyles = new();
             workspace = w;
 
+            // Create the empty observable collections
+            keyNames = new();
+            keyStyles = new();
+
+            // Create the AddKey command
             var addKeyEnabled = this.WhenAnyValue(
                 x => x.SelectedKey,
                 x => !string.IsNullOrEmpty(x));
@@ -27,8 +31,24 @@ namespace TASBoard.ViewModels
             AddKey = ReactiveCommand.Create(
                 AddKeyToWorkspace,
                 addKeyEnabled);
+
+            // Create the Encode command
+            var validMovie = this.WhenAnyValue(
+                x => x.MoviePath,
+                x => File.Exists(x));
+
+            var validOutputPath = this.WhenAnyValue(
+                x => x.OutputPath,
+                x => Directory.Exists(Path.GetDirectoryName(x)));
+
+            var encodeEnabled = Observable.Merge(validMovie, validOutputPath);
+
+            Encode = ReactiveCommand.Create(
+                () => workspace.Encode(MoviePath, OutputPath),
+                encodeEnabled);
         }
 
+        public ReactiveCommand<Unit, Unit> Encode { get; }
 
         private void AddKeyToWorkspace()
         {
