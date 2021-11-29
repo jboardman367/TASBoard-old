@@ -33,8 +33,8 @@ namespace TASBoard.Models
 
         public KeyObject(string keyStyle, string keyName, int x, int y, int zInd, bool displayDown) 
         {
-            keyDownImage = new("Assets\\KeySprites\\" + keyStyle + "\\" + keyName + "_down.png");
-            keyUpImage = new("Assets\\KeySprites\\" + keyStyle + "\\" + keyName + "_up.png");
+            keyDownImage = new("Assets/KeySprites/" + keyStyle + "/" + keyName + "_down.png");
+            keyUpImage = new("Assets/KeySprites/" + keyStyle + "/" + keyName + "_up.png");
             currentImage = displayDown ? keyDownImage : keyUpImage;
             _x = x;
             _y = y;
