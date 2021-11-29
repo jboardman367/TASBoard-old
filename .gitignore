@@ -455,3 +455,6 @@ $RECYCLE.BIN/
 
 # Sprites
 Assets/KeySprites/
+
+# ffmpeg libraries
+ffmpeg/x86_64/
