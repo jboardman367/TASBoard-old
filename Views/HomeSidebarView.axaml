@@ -31,19 +31,19 @@
 				</ComboBox.ItemTemplate>
 			</ComboBox>
 		</StackPanel>
-		<StackPanel Margin="10" Orientation="Horizontal">
+		<DockPanel Margin="10">
 			<CheckBox Click="DisplayKeysDownClicked">Display keys down</CheckBox>
 			<Button DockPanel.Dock="Right"
 					Command="{Binding AddKey}">
 				Add Key
 			</Button>
-		</StackPanel>
+		</DockPanel>
 		<TextBox Text="{Binding MoviePath}" 
 					Watermark="Path to movie file"
 					Width="280"
 					Margin="10"/>
 		<TextBox Text="{Binding OutputPath}"
-					Watermark="Path to movie file"
+					Watermark="Path to save output"
 					Width="280"
 					Margin="10"/>
 	</StackPanel>
