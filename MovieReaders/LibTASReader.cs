@@ -9,7 +9,8 @@ namespace TASBoard.MovieReaders
 {
     public class LibTASReader : IMovieReader
     {
-        public MovieSettings MovieSettings { get; private set; }
+        public MovieProperties MovieProperties { get; private set; }
+        public int Length { get => MovieProperties.Length; }
 
         private readonly LibTASEnum _enum;
         private readonly string tempDir;
@@ -28,13 +29,15 @@ namespace TASBoard.MovieReaders
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return GetEnumerator1();
         }
 
-        public LibTASEnum GetEnumerator()
+        private IEnumerator GetEnumerator1()
         {
             return _enum;
         }
+
+        public IEnumerator<InputFrame> GetEnumerator() { return _enum; }
 
         public LibTASReader(string fname)
         {
@@ -56,8 +59,10 @@ namespace TASBoard.MovieReaders
             movieStream.Close();
 
             // Initialise variables to put in the movie settings
-            int? den = null;
-            int? num = null;
+            int den = -1;
+            int num = -1;
+            int frames = -1;
+            bool variableRate = false;
 
             // Open the config file to read values out of
             var configStream = File.OpenRead(Path.Join(tempDir, "config.ini"));
@@ -75,6 +80,14 @@ namespace TASBoard.MovieReaders
                 {
                     num = int.Parse(line.Substring("framerate_num=".Length));
                 }
+                else if (line.StartsWith("frame_count="))
+                {
+                    frames = int.Parse(line.Substring("frame_count=".Length));
+                }
+                else if (line.StartsWith("variable_framerate="))
+                {
+                    variableRate = bool.Parse(line.Substring("variable_framerate=".Length));
+                }
 
                 line = configReader.ReadLine();
             }
@@ -84,26 +97,45 @@ namespace TASBoard.MovieReaders
             configStream.Close();
 
             // Assign values into the movie settings
-            MovieSettings = new MovieSettings(num, den);
+            MovieProperties = new MovieProperties(
+                num, 
+                den, 
+                frames,
+                variableRate);
 
             // Create the input enumerator with the input file
-            _enum = new LibTASEnum(Path.Join(tempDir, "inputs"));
+            _enum = new LibTASEnum(Path.Join(tempDir, "inputs"), MovieProperties);
         }
     }
 
-    public class LibTASEnum : IEnumerator
+    public class LibTASEnum : IEnumerator<InputFrame>
     {
         readonly Stream inputStream;
         readonly StreamReader inputReader;
-        readonly List<string> currentItem = new();
+        private InputFrame? currentFrame;
         readonly Dictionary<string, string> keySymToNameDict;
+        readonly MovieProperties movieProperties;
 
-        object IEnumerator.Current { get => Current; }
+        object IEnumerator.Current { get => Current1; }
 
-        public List<string> Current { get => currentItem; }
+        private object Current1 { get => Current; }
 
-        public LibTASEnum(string fname)
+        public InputFrame Current {
+            get
+            {
+                if (currentFrame == null)
+                    throw new InvalidOperationException();
+
+                return (InputFrame)currentFrame;
+            }
+            
+        }
+
+        public LibTASEnum(string fname, MovieProperties properties)
         {
+            // Store the properties
+            movieProperties = properties;
+
             // Load the conversion dict
             keySymToNameDict = GetKeySymToNameDict();
 
@@ -116,8 +148,10 @@ namespace TASBoard.MovieReaders
 
         public void Close()
         {
-            inputReader.Close();
-            inputStream.Close();
+            if (inputReader != null)
+                inputReader.Close();
+            if (inputStream != null)
+                inputStream.Close();
         }
 
         public bool MoveNext()
@@ -128,8 +162,10 @@ namespace TASBoard.MovieReaders
             // If there is no next line, return false
             if (line is null) { return false; }
 
-            // Empty the last frame's inputs
-            currentItem.Clear();
+            // Initialise some variables to collect frame information
+            int framerateNum = movieProperties.FramerateNum;
+            int framerateDen = movieProperties.FramerateDen;
+            List<string> keys = new();
 
             // Iterate over the line to interperet the inputs.
             // See http://tasvideos.org/EmulatorResources/LibTAS/LTMFormat.html
@@ -147,7 +183,7 @@ namespace TASBoard.MovieReaders
                     {
                         if (keySymToNameDict.TryGetValue(key, out string keyName))
                         {
-                            currentItem.Add(keyName);
+                            keys.Add(keyName);
                         }
                     }
                     continue;
@@ -159,15 +195,24 @@ namespace TASBoard.MovieReaders
                     // We will just shortcut to the LMB and RMB here
                     if (section[section.Length - 5] != '.')
                     {
-                        currentItem.Add("LMB");
+                        keys.Add("LMB");
                     }
                     if (section[section.Length - 4] != '.')
                     {
-                        currentItem.Add("RMB");
+                        keys.Add("RMB");
                     }
+                }
+
+                // Handle variable framerate
+                if (section[0] == 'T')
+                {
+                    string[] rate = section[1..].Split(':');
+                    framerateNum = int.Parse(rate[0]);
+                    framerateDen = int.Parse(rate[1]);
                 }
             }
 
+            currentFrame = new(keys, new Fraction(framerateNum, framerateDen));
 
             // Return true as default
             return true;
@@ -176,6 +221,40 @@ namespace TASBoard.MovieReaders
         public void Reset()
         {
             throw new NotImplementedException();
+        }
+
+        private bool disposedValue = false;
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // This is where I would dispose of managed resources, if I had any
+                }
+                currentFrame = null;
+                if (inputReader != null)
+                {
+                    inputReader.Close();
+                    inputReader.Dispose();
+                }
+                if (inputStream != null)
+                {
+                    inputStream.Close();
+                    inputStream.Dispose();
+                }                
+            }
+        }
+
+        ~LibTASEnum()
+        {
+            Dispose(disposing: false);
         }
 
         static Dictionary<string, string> GetKeySymToNameDict()
