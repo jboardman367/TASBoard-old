@@ -1,17 +1,31 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TASBoard.MovieReaders
 {
-    interface IMovieReader : IEnumerable<InputFrame>
+    public interface IMovieReader : IEnumerable<InputFrame>
     {
         void Close();
 
         MovieProperties MovieProperties { get; }
+
+        public static IMovieReader ReturnReaderByExtention(string fname)
+        {
+            if (fname.EndsWith(".ltm"))
+                return new LibTASReader(fname);
+
+            throw new ArgumentException("Unrecognised filetype");
+        }
+
+        public static bool IsValidFile(string? fname)
+        {
+            return fname != null && fname.EndsWith(".ltm"); // Can add more with || later
+        }
     }
 
     public struct MovieProperties

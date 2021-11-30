@@ -1,14 +1,21 @@
 ﻿using Avalonia;
 using Avalonia.Media.Imaging;
 using ReactiveUI;
+using TASBoard.MovieReaders;
 
 namespace TASBoard.Models
 {
-    public class KeyObject : ReactiveObject
+    public class KeyObject : ReactiveObject, ICanvasElement
     {
         private Bitmap keyDownImage;
         private Bitmap keyUpImage;
         private Bitmap currentImage;
+        private System.Drawing.Bitmap keyDownBitmap;
+        private System.Drawing.Bitmap keyUpBitmap;
+        private string keyName;
+        private string keyStyle;
+
+        public int FramesAheadNeeded { get; } = 1;
 
         private int _x, _y, _zIndex;
 
@@ -39,6 +46,8 @@ namespace TASBoard.Models
             _x = x;
             _y = y;
             _zIndex = zInd;
+            this.keyName = keyName;
+            this.keyStyle = keyStyle;
         }
 
         public void SetKeyDown(bool displayDown)
@@ -49,5 +58,27 @@ namespace TASBoard.Models
         public KeyObject(string keyStyle, string keyName, bool displayDown) : this(keyStyle, keyName, 0, 0, 0, displayDown) { }
 
         public Bitmap Image { get => currentImage; set => this.RaiseAndSetIfChanged(ref currentImage, value); }
+
+        public void OnBeginEncode()
+        {
+            keyDownBitmap = new("Assets/KeySprites/" + keyStyle + "/" + keyName + "_down.png");
+            keyUpBitmap = new("Assets/KeySprites/" + keyStyle + "/" + keyName + "_up.png");
+        }
+
+        public void OnEndEncode()
+        {
+            // Don't want to have these just sitting in memory
+            keyDownBitmap.Dispose();
+            keyUpBitmap.Dispose();
+        }
+
+        public System.Drawing.Bitmap GetEncodeFrame(InputFrame[] inputFrames)
+        {
+            if (inputFrames[0].Inputs.Contains(keyName))
+            {
+                return keyDownBitmap;
+            }
+            return keyUpBitmap;
+        }
     }
 }

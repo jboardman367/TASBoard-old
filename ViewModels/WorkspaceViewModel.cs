@@ -10,15 +10,13 @@ namespace TASBoard.ViewModels
         private Workspace workspace;
         public WorkspaceViewModel(Workspace w)
         {
-            bg = new SolidColorBrush(new Color(255, 112, 112, 112));
             workspace = w;
         }
 
-        private Brush bg;
         public Brush Background 
         { 
-            get => bg; 
-            set => this.RaiseAndSetIfChanged(ref bg, value); 
+            get => workspace.backgroundColor; 
+            set => this.RaiseAndSetIfChanged(ref workspace.backgroundColor, value); 
         }
         
         public void UpdateWorkspaceBackground(byte r, byte g, byte b)
@@ -26,6 +24,6 @@ namespace TASBoard.ViewModels
             Background = new SolidColorBrush(new Color(255, r, g, b));
         }
 
-        public ObservableCollection<KeyObject> Items { get => workspace.AllKeys; }
+        public ObservableCollection<ICanvasElement> Items { get => workspace.AllCanvasElements; }
     }
 }

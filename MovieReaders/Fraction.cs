@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FFmpeg.AutoGen;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -70,6 +71,8 @@ namespace TASBoard.MovieReaders
         public static implicit operator Fraction(int i) => new(i, 1);
 
         public static explicit operator double(Fraction f) => f.Num / f.Den;
+
+        public static explicit operator AVRational(Fraction f) => new() { num = f.Num, den = f.Den };
 
         public override bool Equals(object? obj)
         {

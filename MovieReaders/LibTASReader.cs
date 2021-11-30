@@ -10,7 +10,6 @@ namespace TASBoard.MovieReaders
     public class LibTASReader : IMovieReader
     {
         public MovieProperties MovieProperties { get; private set; }
-        public int Length { get => MovieProperties.Length; }
 
         private readonly LibTASEnum _enum;
         private readonly string tempDir;

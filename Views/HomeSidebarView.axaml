@@ -47,6 +47,12 @@
 					Watermark="Path to save output"
 					Width="280"
 					Margin="10"/>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock>Framerate: </TextBlock>
+			<TextBox Text="{Binding FramerateNum}"/>
+			<TextBlock> / </TextBlock>
+			<TextBox Text="{Binding FramerateDen}"/>
+		</StackPanel>
 		<Button HorizontalAlignment="Right"
 				Margin="10"
 				Command="{Binding Encode}">
