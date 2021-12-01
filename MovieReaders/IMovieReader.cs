@@ -57,5 +57,15 @@ namespace TASBoard.MovieReaders
             Inputs = inputs;
             TimeDelta = timeDelta;
         }
+
+        public static InputFrame operator + (InputFrame a, InputFrame b)
+        {
+            return new InputFrame(inputs: a.Inputs.Union(b.Inputs).ToList(), timeDelta: a.TimeDelta + b.TimeDelta);
+        }
+        
+        public static InputFrame operator + (InputFrame a, Fraction b)
+        {
+            return new InputFrame(inputs: a.Inputs, timeDelta: a.TimeDelta + b);
+        }
     }
 }

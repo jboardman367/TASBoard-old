@@ -48,7 +48,13 @@ namespace TASBoard.MovieReaders
         }
 
         public static Fraction operator +(Fraction a, Fraction b)
-            => new(a.Num * b.Num, a.Den * b.Den);
+            => new(a.Num * b.Den + b.Num * a.Den, a.Den * b.Den);
+
+        public static Fraction operator -(Fraction a, Fraction b)
+            => new(a.Num * b.Den - b.Num * a.Den, a.Den * b.Den);
+
+        public static Fraction operator -(Fraction a)
+            => new(-a.Num, a.Den);
 
         public static bool operator >(Fraction a, Fraction b)
             => a.Num * b.Den > b.Num * a.Den;

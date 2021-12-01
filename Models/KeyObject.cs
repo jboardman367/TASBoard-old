@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Media.Imaging;
 using ReactiveUI;
+using System.Collections.Generic;
 using TASBoard.MovieReaders;
 
 namespace TASBoard.Models
@@ -15,7 +16,7 @@ namespace TASBoard.Models
         private string keyName;
         private string keyStyle;
 
-        public int FramesAheadNeeded { get; } = 1;
+        public Fraction SecondsAheadNeeded { get; } = 0;
 
         private int _x, _y, _zIndex;
 
@@ -72,9 +73,10 @@ namespace TASBoard.Models
             keyUpBitmap.Dispose();
         }
 
-        public System.Drawing.Bitmap GetEncodeFrame(InputFrame[] inputFrames)
+        public System.Drawing.Bitmap GetEncodeFrame(List<InputFrame> inputFrames)
         {
-            if (inputFrames[0].Inputs.Contains(keyName))
+
+            if (inputFrames.Sum().Inputs.Contains(keyName))
             {
                 return keyDownBitmap;
             }

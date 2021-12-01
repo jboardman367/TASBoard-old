@@ -1,15 +1,15 @@
 ﻿using Avalonia;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TASBoard.MovieReaders;
 using System.Drawing.Imaging;
 using System.Drawing;
+using System.Collections.Generic;
+using FFMediaToolkit.Encoding;
+using FFmpeg.AutoGen;
+using System.Linq;
+using FFMediaToolkit.Graphics;
 
 namespace TASBoard.Models
 {
@@ -21,7 +21,7 @@ namespace TASBoard.Models
             AllCanvasElements = new();
         }
 
-        public Avalonia.Media.Brush backgroundColor = new SolidColorBrush(new Avalonia.Media.Color(255, 112, 112, 112));
+        public SolidColorBrush backgroundColor = new(new Avalonia.Media.Color(255, 112, 112, 112));
 
         public void AddKey(string keyStyle, string keyName)
         {
@@ -43,28 +43,111 @@ namespace TASBoard.Models
         }
 
         private bool displayKeyDown = false;
-        private Rect encodeBounds;
+        private Rectangle encodeBounds;
 
         public void Encode(string moviePath, string outputPath, Fraction frameRate)
         {
             // Find the bounds of the area that will be captured
-            uint minX = uint.MaxValue, minY = uint.MaxValue, maxX = 0, maxY = 0;
+            int minX = int.MaxValue, minY = int.MaxValue, maxX = 0, maxY = 0;
+            Fraction requiredBufferSeconds = 0;
 
             foreach (var element in AllCanvasElements)
             {
                 if (element == null) { continue; }
-                minX = Math.Min(minX, (uint)element.Bounds.Left);
-                minY = Math.Min(minY, (uint)element.Bounds.Top);
-                maxX = Math.Max(maxX, (uint)element.Bounds.Right);
-                maxY = Math.Max(maxY, (uint)element.Bounds.Bottom);
 
-                // Since we are looping over them anyway, tell them to prepare to encode
+                // Update the capture bounds if needed
+                minX = Math.Min(minX, (int)element.Bounds.Left);
+                minY = Math.Min(minY, (int)element.Bounds.Top);
+                maxX = Math.Max(maxX, (int)element.Bounds.Right);
+                maxY = Math.Max(maxY, (int)element.Bounds.Bottom);
+
+                // Tell the elements to prepare for an encode
                 element.OnBeginEncode();
+
+                // Update the required buffer length if needed
+                if (element.SecondsAheadNeeded > requiredBufferSeconds)
+                    requiredBufferSeconds = element.SecondsAheadNeeded;
             }
+
+            encodeBounds = new(minX, minY, maxX - minX, maxY - minY);
 
             // Get the reader for the movie file
             IMovieReader movieReader = IMovieReader.ReturnReaderByExtention(moviePath);
-            
+
+            // Encoding settings
+            var settings = new VideoEncoderSettings(width: maxX - minX, height: maxY - minY, codec: VideoCodec.H264);
+            settings.EncoderPreset = EncoderPreset.Fast;
+            settings.CRF = 17;
+            settings.FramerateRational = (AVRational)frameRate;
+
+            // Loop over the input frames
+            // TODO: Audio for combining with audiovideo elements
+            Fraction secondsInCurrentFrame = 0;
+            List<InputFrame> frameBuffer = new();
+
+            using (var file = MediaBuilder.CreateContainer(outputPath).WithVideo(settings).Create())
+            {
+                foreach (var inputFrame in movieReader)
+                {
+                    // Add to the buffer
+                    frameBuffer.Add(inputFrame);
+                    secondsInCurrentFrame += inputFrame.TimeDelta;
+
+                    // If there is now more than the buffer requires, make the next frame
+                    if (secondsInCurrentFrame >= requiredBufferSeconds && secondsInCurrentFrame >= frameRate)
+                    {
+                        // Add the frame
+                        var outputFrame = GetEncodeFrame(frameBuffer);
+                        var bitlock = outputFrame.LockBits(new Rectangle(System.Drawing.Point.Empty, outputFrame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+                        var bitmapData = ImageData.FromPointer(bitlock.Scan0, ImagePixelFormat.Bgr24, outputFrame.Size);
+
+                        file.Video.AddFrame(bitmapData);
+
+                        outputFrame.UnlockBits(bitlock);
+                        outputFrame.Dispose();
+
+                        // Dequeue the used frames, and reduce the duration of any incomplete one
+                        Fraction timeToRemove = frameRate - frameBuffer[0].TimeDelta;
+                        while (timeToRemove >= 0)
+                        {
+                            frameBuffer.RemoveAt(0); // THIS SECTION NEEDS AN EXPLICIT CHECK TO SEE IF IT REMOVED THE LAST ELEMENT
+                            if (frameBuffer.Count == 0)
+                                break;
+                            timeToRemove = frameRate - frameBuffer[0].TimeDelta;
+                        }
+                        if (frameBuffer.Count > 0)
+                            frameBuffer[0] = new(frameBuffer[0].Inputs, -timeToRemove);
+                        secondsInCurrentFrame -= frameRate;
+                    }
+                }
+                // Add the stragler frames
+                while (frameBuffer.Count > 0)
+                {
+                    // Add the frame
+                    var outputFrame = GetEncodeFrame(frameBuffer);
+                    var bitlock = outputFrame.LockBits(new Rectangle(System.Drawing.Point.Empty, outputFrame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+                    var bitmapData = ImageData.FromPointer(bitlock.Scan0, ImagePixelFormat.Bgr24, outputFrame.Size);
+
+                    file.Video.AddFrame(bitmapData);
+
+                    outputFrame.UnlockBits(bitlock);
+                    outputFrame.Dispose();
+
+                    // Dequeue the used frames, and reduce the duration of any incomplete one
+                    Fraction timeToRemove = frameRate - frameBuffer[0].TimeDelta;
+                    while (timeToRemove >= 0)
+                    {
+                        frameBuffer.RemoveAt(0); // THIS SECTION NEEDS AN EXPLICIT CHECK TO SEE IF IT REMOVED THE LAST ELEMENT
+                        if (frameBuffer.Count == 0)
+                            break;
+                        timeToRemove = frameRate - frameBuffer[0].TimeDelta;
+                    }
+                    if (frameBuffer.Count > 0)
+                        frameBuffer[0] = new(frameBuffer[0].Inputs, -timeToRemove);
+                }
+
+                file.Dispose();
+            }
 
             // Tell the elements that we are ending the encode
             foreach (var element in AllCanvasElements)
@@ -73,9 +156,31 @@ namespace TASBoard.Models
             }
         }
 
-        public System.Drawing.Bitmap GetEncodeFrame(InputFrame[] inputFrames)
+        public Bitmap GetEncodeFrame(List<InputFrame> inputFrames)
         {
-            System.Drawing.Bitmap encodeFrame = new((int)encodeBounds.Size.Width, (int)encodeBounds.Size.Height);
+            // Create the bitmap
+            Bitmap encodeFrame = new(encodeBounds.Size.Width, encodeBounds.Size.Height);
+
+            // Create a graphics object from the bitmap to use drawing methods
+            Graphics graphics = Graphics.FromImage(encodeFrame);
+
+            // Fill in the background
+            graphics.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(backgroundColor.Color.A, backgroundColor.Color.R, backgroundColor.Color.G, backgroundColor.Color.B)),
+                new Rectangle(new System.Drawing.Point(0, 0), encodeBounds.Size));
+
+            // Add the canvas elements
+            var sortedElements = new List<ICanvasElement>(AllCanvasElements);
+            sortedElements.Sort(ICanvasElement.zComparator);
+            foreach (var element in sortedElements)
+            {
+                graphics.DrawImage(element.GetEncodeFrame(inputFrames), new System.Drawing.Point((int)element.Bounds.Left - encodeBounds.Left, (int)element.Bounds.Top - encodeBounds.Top));
+            }
+
+            // Dispose the graphics
+            graphics.Dispose();
+
+            // Return the bitmap
+            return encodeFrame;
         }
     }
 }

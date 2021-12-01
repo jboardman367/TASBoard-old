@@ -13,7 +13,7 @@ namespace TASBoard.ViewModels
             workspace = w;
         }
 
-        public Brush Background 
+        public SolidColorBrush Background 
         { 
             get => workspace.backgroundColor; 
             set => this.RaiseAndSetIfChanged(ref workspace.backgroundColor, value); 
