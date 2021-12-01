@@ -211,7 +211,8 @@ namespace TASBoard.MovieReaders
                 }
             }
 
-            currentFrame = new(keys, new Fraction(framerateNum, framerateDen));
+            // Reciprocal of framerate is timedelta
+            currentFrame = new(keys, new Fraction(framerateDen, framerateNum));
 
             // Return true as default
             return true;
@@ -275,6 +276,8 @@ namespace TASBoard.MovieReaders
                     string[] kv = line.Split(',');
                     keySymToName.TryAdd(kv[0], kv[1]);
                 }
+
+                line = mappingsReader.ReadLine();
             }
 
             // Close the file

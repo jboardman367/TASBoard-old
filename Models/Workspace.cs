@@ -10,11 +10,15 @@ using FFMediaToolkit.Encoding;
 using FFmpeg.AutoGen;
 using System.Linq;
 using FFMediaToolkit.Graphics;
+using FFMediaToolkit;
+using System.IO;
 
 namespace TASBoard.Models
 {
     public class Workspace
     {
+        static bool FFmpegPathSet = false;
+
         public ObservableCollection<ICanvasElement> AllCanvasElements;
         public Workspace()
         {
@@ -47,7 +51,7 @@ namespace TASBoard.Models
 
         public void Encode(string moviePath, string outputPath, Fraction frameRate)
         {
-            // Find the bounds of the area that will be captured
+            // Get initial info out of the canvas elements
             int minX = int.MaxValue, minY = int.MaxValue, maxX = 0, maxY = 0;
             Fraction requiredBufferSeconds = 0;
 
@@ -75,15 +79,24 @@ namespace TASBoard.Models
             IMovieReader movieReader = IMovieReader.ReturnReaderByExtention(moviePath);
 
             // Encoding settings
-            var settings = new VideoEncoderSettings(width: maxX - minX, height: maxY - minY, codec: VideoCodec.H264);
-            settings.EncoderPreset = EncoderPreset.Fast;
-            settings.CRF = 17;
-            settings.FramerateRational = (AVRational)frameRate;
+            var settings = new VideoEncoderSettings(width: maxX - minX, height: maxY - minY, codec: VideoCodec.H264)
+            {
+                EncoderPreset = EncoderPreset.Fast,
+                CRF = 17,
+                FramerateRational = (AVRational)frameRate
+            };
 
             // Loop over the input frames
             // TODO: Audio for combining with audiovideo elements
             Fraction secondsInCurrentFrame = 0;
             List<InputFrame> frameBuffer = new();
+
+            // Set the ffmpeg path if not already set
+            if (!FFmpegPathSet)
+            {
+                FFmpegLoader.FFmpegPath = Path.GetFullPath("ffmpeg/x86_64");
+                FFmpegPathSet = true;
+            }
 
             using (var file = MediaBuilder.CreateContainer(outputPath).WithVideo(settings).Create())
             {
@@ -94,7 +107,7 @@ namespace TASBoard.Models
                     secondsInCurrentFrame += inputFrame.TimeDelta;
 
                     // If there is now more than the buffer requires, make the next frame
-                    if (secondsInCurrentFrame >= requiredBufferSeconds && secondsInCurrentFrame >= frameRate)
+                    if (secondsInCurrentFrame >= requiredBufferSeconds && secondsInCurrentFrame >= ~frameRate)
                     {
                         // Add the frame
                         var outputFrame = GetEncodeFrame(frameBuffer);
@@ -107,17 +120,17 @@ namespace TASBoard.Models
                         outputFrame.Dispose();
 
                         // Dequeue the used frames, and reduce the duration of any incomplete one
-                        Fraction timeToRemove = frameRate - frameBuffer[0].TimeDelta;
+                        Fraction timeToRemove = ~frameRate - frameBuffer[0].TimeDelta;
                         while (timeToRemove >= 0)
                         {
-                            frameBuffer.RemoveAt(0); // THIS SECTION NEEDS AN EXPLICIT CHECK TO SEE IF IT REMOVED THE LAST ELEMENT
+                            frameBuffer.RemoveAt(0);
                             if (frameBuffer.Count == 0)
                                 break;
-                            timeToRemove = frameRate - frameBuffer[0].TimeDelta;
+                            timeToRemove -= frameBuffer[0].TimeDelta;
                         }
                         if (frameBuffer.Count > 0)
                             frameBuffer[0] = new(frameBuffer[0].Inputs, -timeToRemove);
-                        secondsInCurrentFrame -= frameRate;
+                        secondsInCurrentFrame -= ~frameRate;
                     }
                 }
                 // Add the stragler frames
@@ -134,13 +147,13 @@ namespace TASBoard.Models
                     outputFrame.Dispose();
 
                     // Dequeue the used frames, and reduce the duration of any incomplete one
-                    Fraction timeToRemove = frameRate - frameBuffer[0].TimeDelta;
+                    Fraction timeToRemove = ~frameRate - frameBuffer[0].TimeDelta;
                     while (timeToRemove >= 0)
                     {
-                        frameBuffer.RemoveAt(0); // THIS SECTION NEEDS AN EXPLICIT CHECK TO SEE IF IT REMOVED THE LAST ELEMENT
+                        frameBuffer.RemoveAt(0);
                         if (frameBuffer.Count == 0)
                             break;
-                        timeToRemove = frameRate - frameBuffer[0].TimeDelta;
+                        timeToRemove -= frameBuffer[0].TimeDelta;
                     }
                     if (frameBuffer.Count > 0)
                         frameBuffer[0] = new(frameBuffer[0].Inputs, -timeToRemove);

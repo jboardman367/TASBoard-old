@@ -186,7 +186,7 @@ namespace TASBoard.ViewModels
              * The mouse buttons (and potentially other buttons added later) are stored
              * differently in the movie file, so they are hard coded seperately.
              */
-            string[] lines = File.ReadAllLines("Assets/mappings.txt");
+            string[] lines = File.ReadAllLines("Assets/InputMappings/LibTAS.txt");
             string[] mappedKeys = new string[lines.Length + 2];
             mappedKeys[0] = "LMB";
             mappedKeys[1] = "RMB";
@@ -198,8 +198,9 @@ namespace TASBoard.ViewModels
 
             return mappedKeys;
         }
-
-        public string? MoviePath { get; set; }
-        public string? OutputPath { get; set; }
+        private string? moviePath;
+        private string? outputPath;
+        public string? MoviePath { get => moviePath; set => this.RaiseAndSetIfChanged(ref moviePath, value); }
+        public string? OutputPath { get => outputPath; set => this.RaiseAndSetIfChanged(ref outputPath, value); }
     }
 }

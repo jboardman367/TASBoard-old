@@ -3,6 +3,12 @@
     "TASBoard": {
       "commandName": "Project",
       "workingDirectory": "C:\\Users\\smart\\source\\repos\\TASBoardNotTest\\TASBoard"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "environmentVariables": {},
+      "workingDirectory": "/home/luminouslamp/TASBoardTesting",
+      "distributionName": ""
     }
   }
 }
