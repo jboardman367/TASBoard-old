@@ -12,6 +12,7 @@ using System.Linq;
 using FFMediaToolkit.Graphics;
 using FFMediaToolkit;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace TASBoard.Models
 {
@@ -104,7 +105,7 @@ namespace TASBoard.Models
             List<InputFrame> frameBuffer = new();
 
             // Set the ffmpeg path if not already set
-            if (!FFmpegPathSet)
+            if (!FFmpegPathSet && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 FFmpegLoader.FFmpegPath = Path.GetFullPath("ffmpeg/x86_64");
                 FFmpegPathSet = true;
