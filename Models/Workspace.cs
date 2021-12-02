@@ -76,10 +76,16 @@ namespace TASBoard.Models
                     requiredBufferSeconds = element.SecondsAheadNeeded;
             }
 
+#if DEBUG
+            Console.WriteLine("Got info for canvas elements");
+#endif
             encodeBounds = new(minX, minY, maxX - minX, maxY - minY);
 
             // Get the reader for the movie file
             IMovieReader movieReader = IMovieReader.ReturnReaderByExtention(moviePath);
+#if DEBUG
+            Console.WriteLine("Movie reader created");
+#endif
 
             // Encoding settings
             var settings = new VideoEncoderSettings(width: maxX - minX, height: maxY - minY, codec: VideoCodec.H264)
@@ -89,6 +95,9 @@ namespace TASBoard.Models
                 FramerateRational = (AVRational)frameRate
             };
 
+#if DEBUG
+            Console.WriteLine("Encoder settings created");
+#endif
             // Loop over the input frames
             // TODO: Audio for combining with audiovideo elements
             Fraction secondsInCurrentFrame = 0;
@@ -100,6 +109,10 @@ namespace TASBoard.Models
                 FFmpegLoader.FFmpegPath = Path.GetFullPath("ffmpeg/x86_64");
                 FFmpegPathSet = true;
             }
+
+#if DEBUG
+            Console.WriteLine("About to create video file");
+#endif
 
             using (var file = MediaBuilder.CreateContainer(outputPath).WithVideo(settings).Create())
             {
