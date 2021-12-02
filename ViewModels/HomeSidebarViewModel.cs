@@ -155,7 +155,8 @@ namespace TASBoard.ViewModels
             string[] directories = Directory.GetDirectories("Assets/KeySprites");
             for (int i = 0; i < directories.Length; i++)
             {
-                directories[i] = directories[i].Split(new char[] { '\\', '/' })[0];
+                // Weird split stuff here because of linux using / and windows using \
+                directories[i] = directories[i].Split(new char[] { '\\', '/' })[2];
             }
             return directories.ToList();
         }
