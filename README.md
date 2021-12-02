@@ -11,6 +11,12 @@ GUI for creating input displays from TAS movie files
 - Add more kinds of elements than just keys
   - Waterfalls
   - Static elements
+- Add in more ffmpeg options (As a sidebar?)
+  - Codec
+  - bitrate
+- Add more sidebars
+  - Properties
+  - Encoding Settings (?)
 
 ## Known Fixes
 - Encode button appears to do nothing on Linux
