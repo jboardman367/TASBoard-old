@@ -5,4 +5,4 @@ GUI for creating input displays from TAS movie files
 TASBoard used the following NuGet packages:
 - SharpZipLib 1.3.3
 - FFMediaToolkit 4.1.2
-  - You will also need to follow the setup instructions [here](https://github.com/radek-k/FFMediaToolkit#setup). I will make a more relevant abbreviated version of this later.
+  - For Windows, you will also need to install the libraries listed [here](https://github.com/radek-k/FFMediaToolkit#setup). 
