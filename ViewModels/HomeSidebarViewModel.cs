@@ -152,10 +152,10 @@ namespace TASBoard.ViewModels
 
         private List<string> GetAvailableStyles()
         {
-            string[] directories = Directory.GetDirectories("Assets\\KeySprites");
+            string[] directories = Directory.GetDirectories("Assets/KeySprites");
             for (int i = 0; i < directories.Length; i++)
             {
-                directories[i] = directories[i].Replace("Assets\\KeySprites\\", "");
+                directories[i] = directories[i].Split(new char[] { '\\', '/' })[0];
             }
             return directories.ToList();
         }
@@ -172,7 +172,7 @@ namespace TASBoard.ViewModels
             // and are mapped in mappings.txt
             foreach (string key in mappedKeys)
             {
-                string path = "Assets\\KeySprites\\" + selectedStyle + "\\" + key;
+                string path = "Assets/KeySprites/" + selectedStyle + "/" + key;
                 if (File.Exists(path + "_up.png") && File.Exists(path + "_down.png"))
                     keys.Add(key);
             }
