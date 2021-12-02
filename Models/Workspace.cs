@@ -51,6 +51,9 @@ namespace TASBoard.Models
 
         public void Encode(string moviePath, string outputPath, Fraction frameRate)
         {
+#if DEBUG
+            Console.WriteLine("Starting encode");
+#endif
             // Get initial info out of the canvas elements
             int minX = int.MaxValue, minY = int.MaxValue, maxX = 0, maxY = 0;
             Fraction requiredBufferSeconds = 0;
@@ -100,6 +103,9 @@ namespace TASBoard.Models
 
             using (var file = MediaBuilder.CreateContainer(outputPath).WithVideo(settings).Create())
             {
+#if DEBUG
+                Console.WriteLine("Video File created");
+#endif
                 foreach (var inputFrame in movieReader)
                 {
                     // Add to the buffer
