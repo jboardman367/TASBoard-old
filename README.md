@@ -17,6 +17,7 @@ GUI for creating input displays from TAS movie files
 - Add more sidebars
   - Properties
   - Encoding Settings (?)
+- Add sharing and downloading of style packs
 
 ## Known Fixes
 - Encode button appears to do nothing on Linux
