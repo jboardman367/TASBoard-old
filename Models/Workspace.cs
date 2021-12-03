@@ -182,6 +182,8 @@ namespace TASBoard.Models
                 file.Dispose();
             }
 
+            movieReader.Close();
+
             // Tell the elements that we are ending the encode
             foreach (var element in AllCanvasElements)
             {
