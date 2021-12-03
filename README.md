@@ -6,8 +6,9 @@ GUI for creating input displays from TAS movie files
 - Add context menu to canvas elements
   - change z index
   - delete
-- Add option to encode straight onto a movie
+- Add option to encode straight onto a video file
   - This requires adding audio processing
+  - Option to apply chroma key before putting onto video
 - Add more kinds of elements than just keys
   - Waterfalls
   - Static elements
@@ -17,6 +18,9 @@ GUI for creating input displays from TAS movie files
 - Add more sidebars
   - Properties
   - Encoding Settings (?)
+- Add sharing and downloading of style packs
+- Add in the rest of the key mappings
+- Add in the load style function
 
 ## Known Fixes
 - Encode button appears to do nothing on Linux
