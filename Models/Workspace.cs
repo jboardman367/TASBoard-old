@@ -70,7 +70,7 @@ namespace TASBoard.Models
                 maxY = Math.Max(maxY, (int)element.Bounds.Bottom);
 
                 // Tell the elements to prepare for an encode
-                element.OnBeginEncode();
+                element.OnBeginEncode(frameRate);
 
                 // Update the required buffer length if needed
                 if (element.SecondsAheadNeeded > requiredBufferSeconds)

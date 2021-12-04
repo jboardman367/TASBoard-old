@@ -24,7 +24,7 @@ namespace TASBoard.Models
         // NB: You are not guaranteed to get this many seconds! The actual values may be either lower or higher
         public Fraction SecondsAheadNeeded { get; }
 
-        public void OnBeginEncode();
+        public void OnBeginEncode(Fraction framerate);
 
         public void OnEndEncode();
 

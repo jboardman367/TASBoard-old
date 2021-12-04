@@ -15,6 +15,7 @@ namespace TASBoard.Models
         private System.Drawing.Bitmap keyUpBitmap;
         private string keyName;
         private string keyStyle;
+        private Fraction encodeRate;
 
         public Fraction SecondsAheadNeeded { get; } = 0;
 
@@ -60,8 +61,9 @@ namespace TASBoard.Models
 
         public Bitmap Image { get => currentImage; set => this.RaiseAndSetIfChanged(ref currentImage, value); }
 
-        public void OnBeginEncode()
+        public void OnBeginEncode(Fraction framerate)
         {
+            encodeRate = framerate;
             keyDownBitmap = new("Assets/KeySprites/" + keyStyle + "/" + keyName + "_down.png");
             keyUpBitmap = new("Assets/KeySprites/" + keyStyle + "/" + keyName + "_up.png");
         }
@@ -75,6 +77,13 @@ namespace TASBoard.Models
 
         public System.Drawing.Bitmap GetEncodeFrame(List<InputFrame> inputFrames)
         {
+            InputFrame relevantFrame = inputFrames[0];
+            int i = 1;
+            while (relevantFrame.TimeDelta < ~encodeRate)
+            {
+                relevantFrame += inputFrames[i];
+                i++;
+            }
 
             if (inputFrames.Sum().Inputs.Contains(keyName))
             {
