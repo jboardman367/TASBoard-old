@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             x:Class="TASBoard.Views.EncodeSidebarView">
+	<StackPanel Background="#e9e9fa">
+		<TextBox Text="{Binding MoviePath}" 
+					Watermark="Path to movie file"
+					Width="280"
+					Margin="10"/>
+		<TextBox Text="{Binding OutputPath}"
+					Watermark="Path to save output"
+					Width="280"
+					Margin="10"/>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock>Framerate: </TextBlock>
+			<TextBox Text="{Binding FramerateNum}"/>
+			<TextBlock FontSize="20"> / </TextBlock>
+			<TextBox Text="{Binding FramerateDen}"/>
+		</StackPanel>
+		<Button HorizontalAlignment="Right"
+				Margin="10"
+				Command="{Binding Encode}">
+			Encode
+		</Button>
+	</StackPanel>
+</UserControl>

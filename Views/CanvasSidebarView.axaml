@@ -3,10 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-             x:Class="TASBoard.Views.HomeSidebarView">
+             x:Class="TASBoard.Views.CanvasSidebarView">
 	<StackPanel Background="#e9e9fa">
 		<StackPanel Orientation="Horizontal" Margin="5">
-			<ComboBox Margin="5" 
+			<ComboBox Margin="5"
 					  PlaceholderText="Select a style"
 					  Items="{Binding KeyStyles}"
 					  SelectedItem="{Binding SelectedStyle}"
@@ -39,24 +39,5 @@
 				Add Key
 			</Button>
 		</DockPanel>
-		<TextBox Text="{Binding MoviePath}" 
-					Watermark="Path to movie file"
-					Width="280"
-					Margin="10"/>
-		<TextBox Text="{Binding OutputPath}"
-					Watermark="Path to save output"
-					Width="280"
-					Margin="10"/>
-		<StackPanel Orientation="Horizontal">
-			<TextBlock>Framerate: </TextBlock>
-			<TextBox Text="{Binding FramerateNum}"/>
-			<TextBlock> / </TextBlock>
-			<TextBox Text="{Binding FramerateDen}"/>
-		</StackPanel>
-		<Button HorizontalAlignment="Right"
-				Margin="10"
-				Command="{Binding Encode}">
-			Encode
-		</Button>
 	</StackPanel>
 </UserControl>

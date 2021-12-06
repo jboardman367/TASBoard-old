@@ -10,11 +10,17 @@
         Title="TASBoard">
 
 	<DockPanel>
-		<ContentControl DockPanel.Dock="Left" 
-						Content="{Binding CurrentSidebar}"
-						MinWidth="300"
-						MaxWidth="300"
+		<StackPanel DockPanel.Dock="Left" Width="300">
+			<StackPanel Orientation="Horizontal">
+				<Button Command="{Binding EncodeButton}">Encode</Button>
+				<Button Command="{Binding CanvasButton}">Canvas</Button>
+				
+			</StackPanel>
+			<ContentControl Content="{Binding CurrentSidebar}"
+							Width="300"
 						/>
+		</StackPanel>
+		
 		<ContentControl Content="{Binding CurrentWorkspace}
 						"/>
 	</DockPanel>

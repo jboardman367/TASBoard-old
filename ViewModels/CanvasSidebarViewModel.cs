@@ -6,17 +6,19 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TASBoard.Models;
 using TASBoard.MovieReaders;
 
 namespace TASBoard.ViewModels
 {
-    public class HomeSidebarViewModel : ViewModelBase
+    public class CanvasSidebarViewModel : ViewModelBase
     {
         private Workspace workspace;
 
         public Workspace Workspace { get => workspace; }
-        public HomeSidebarViewModel(Workspace w)
+        public CanvasSidebarViewModel(Workspace w)
         {
             workspace = w;
 
@@ -32,32 +34,7 @@ namespace TASBoard.ViewModels
             AddKey = ReactiveCommand.Create(
                 AddKeyToWorkspace,
                 addKeyEnabled);
-
-            // Create the Encode command
-            var validMovie = this.WhenAnyValue(
-                x => x.MoviePath,
-                x => File.Exists(x) && IMovieReader.IsValidFile(x));
-
-            var validOutputPath = this.WhenAnyValue(
-                x => x.OutputPath,
-                x => Directory.Exists(Path.GetDirectoryName(x)));
-
-            var validNumerator = this.WhenAnyValue(
-                x => x.FramerateNum,
-                x => int.TryParse(x, out int _));
-
-            var validDenominator = this.WhenAnyValue(
-                x => x.FramerateDen,
-                x => int.TryParse(x, out int _));
-
-            var encodeEnabled = Observable.CombineLatest(validMovie, validOutputPath, validNumerator, validDenominator, (a, b, c, d) => a && b && c && d);
-
-            Encode = ReactiveCommand.Create(
-                () => workspace.Encode(MoviePath, OutputPath, new Fraction(int.Parse(framerateNum), int.Parse(framerateDen))),
-                encodeEnabled);
         }
-
-        public ReactiveCommand<Unit, Unit> Encode { get; }
 
         private void AddKeyToWorkspace()
         {
@@ -78,21 +55,6 @@ namespace TASBoard.ViewModels
         {
             get => selectedStyle;
             set => this.RaiseAndSetIfChanged(ref selectedStyle, value);
-        }
-
-        private string framerateNum = "60";
-        private string framerateDen = "1";
-
-        public string FramerateNum
-        {
-            get => framerateNum;
-            set => this.RaiseAndSetIfChanged(ref framerateNum, value);
-        }
-
-        public string FramerateDen
-        {
-            get => framerateDen;
-            set => this.RaiseAndSetIfChanged(ref framerateDen, value);
         }
 
 

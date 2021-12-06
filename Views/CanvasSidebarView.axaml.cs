@@ -4,13 +4,12 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using TASBoard.ViewModels;
-using TASBoard.Models;
 
 namespace TASBoard.Views
 {
-    public partial class HomeSidebarView : UserControl
+    public partial class CanvasSidebarView : UserControl
     {
-        public HomeSidebarView()
+        public CanvasSidebarView()
         {
             InitializeComponent();
         }
@@ -22,14 +21,14 @@ namespace TASBoard.Views
 
         private void UpdateDropdowns(object sender, PointerPressedEventArgs e)
         {
-            var context = (HomeSidebarViewModel)DataContext;
+            var context = (CanvasSidebarViewModel)DataContext;
             context.UpdateDropdowns();
         }
 
         private void DisplayKeysDownClicked(object sender, RoutedEventArgs e)
         {
             var check = (CheckBox)sender;
-            var context = (HomeSidebarViewModel)DataContext;
+            var context = (CanvasSidebarViewModel)DataContext;
             context.Workspace.SetDisplayKeyDown(check.IsChecked ?? false);
         }
     }

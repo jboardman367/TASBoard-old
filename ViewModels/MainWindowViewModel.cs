@@ -1,3 +1,4 @@
+using ReactiveUI;
 using TASBoard.Models;
 
 namespace TASBoard.ViewModels
@@ -6,24 +7,39 @@ namespace TASBoard.ViewModels
     {
         private ViewModelBase currentSidebar;
         private ViewModelBase currentWorkspace;
+        private Workspace w;
 
         public MainWindowViewModel()
         {
-            Workspace w = new();
-            currentSidebar = new HomeSidebarViewModel(w);
+            w = new();
+            currentSidebar = new EncodeSidebarViewModel(w);
             currentWorkspace = new WorkspaceViewModel(w);
         }
 
         public ViewModelBase CurrentSidebar
         {
             get => currentSidebar;
-            private set => currentSidebar = value;
+            private set => this.RaiseAndSetIfChanged(ref currentSidebar, value);
         }
 
         public ViewModelBase CurrentWorkspace
         {
             get => currentWorkspace;
-            private set => currentWorkspace = value;
+            private set => this.RaiseAndSetIfChanged(ref currentWorkspace, value);
         } 
+
+        public void EncodeButton()
+        {
+            if (currentSidebar is EncodeSidebarViewModel)
+                return;
+            CurrentSidebar = new EncodeSidebarViewModel(w);
+        }
+
+        public void CanvasButton()
+        {
+            if (currentSidebar is CanvasSidebarViewModel)
+                return;
+            CurrentSidebar = new CanvasSidebarViewModel(w);
+        }
     }
 }
