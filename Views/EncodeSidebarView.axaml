@@ -13,12 +13,21 @@
 					Watermark="Path to save output"
 					Width="280"
 					Margin="10"/>
-		<StackPanel Orientation="Horizontal">
-			<TextBlock>Framerate: </TextBlock>
-			<TextBox Text="{Binding FramerateNum}"/>
-			<TextBlock FontSize="20"> / </TextBlock>
+		<StackPanel Orientation="Horizontal" Margin="10">
+			<TextBlock Padding="0,8,7,0">Framerate: </TextBlock>
+			<TextBox Text="{Binding FramerateNum}" 
+					 IsEnabled="{Binding !OntoVideo}"/>
+			<TextBlock FontSize="25" Padding="2"> / </TextBlock>
 			<TextBox Text="{Binding FramerateDen}"/>
 		</StackPanel>
+		<StackPanel Orientation="Horizontal" Margin="10">
+			<TextBlock Padding="0,7,7,0">Encode onto existing video</TextBlock>
+			<CheckBox IsChecked="{Binding OntoVideo}"/>
+		</StackPanel>
+		<TextBox Text="{Binding OntoVideoPath}"
+				 Watermark="Path to video to encode onto"
+				 Width="280"
+				 Margin="10"/>
 		<Button HorizontalAlignment="Right"
 				Margin="10"
 				Command="{Binding Encode}">

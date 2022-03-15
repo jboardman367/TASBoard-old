@@ -37,7 +37,13 @@ namespace TASBoard.ViewModels
                 x => x.FramerateDen,
                 x => int.TryParse(x, out int _));
 
-            var encodeEnabled = Observable.CombineLatest(validMovie, validOutputPath, validNumerator, validDenominator, (a, b, c, d) => a && b && c && d);
+            var validOntoVideoPath = this.WhenAnyValue(
+                x => x.OntoVideoPath,
+                x => File.Exists(x));
+            var ontoVideo = this.WhenAnyValue(x => x.OntoVideo);
+
+            var encodeEnabled = Observable.CombineLatest(validMovie, validOutputPath, validNumerator, validDenominator, validOntoVideoPath, ontoVideo,
+                (a, b, c, d, e, v) => v && a && b && e || !v && a && b && c && d);
 
             Encode = ReactiveCommand.Create(
                 () => workspace.Encode(MoviePath, OutputPath, new Fraction(int.Parse(framerateNum), int.Parse(framerateDen))),
@@ -48,6 +54,11 @@ namespace TASBoard.ViewModels
 
         private string framerateNum = "60";
         private string framerateDen = "1";
+
+        private bool ontoVideo = false;
+        public bool OntoVideo { get => ontoVideo; set => this.RaiseAndSetIfChanged(ref ontoVideo, value); }
+        private string? ontoVideoPath = null;
+        public string? OntoVideoPath { get => ontoVideoPath; set => this.RaiseAndSetIfChanged(ref ontoVideoPath, value); }
 
         public string FramerateNum
         {
