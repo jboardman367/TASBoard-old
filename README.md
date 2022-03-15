@@ -21,6 +21,7 @@ GUI for creating input displays from TAS movie files
 - Add sharing and downloading of style packs
 - Add in the rest of the key mappings
 - Add in the load style function
+- Add save files
 
 ## Known Fixes
 - Encode button appears to do nothing on Linux
